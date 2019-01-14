@@ -54,9 +54,6 @@ from keras.callbacks import ModelCheckpoint
 from keras.callbacks import EarlyStopping
 ```
 
-    Using TensorFlow backend.
-    
-
 ### Loading the Data
 
 We'll start by loading in our training and testing data. You'll find the data stored inside of the file `data.zip` included in this repo. 
@@ -72,8 +69,8 @@ In the cell below:
 
 
 ```python
-train = pd.read_csv('data/train.csv')
-train = train.sample(frac=0.2)
+train = None
+train = None
 ```
 
 Great! Next, we'll get the values for both our labels and the comments that will act as our training and testing data. We do this in order to get the data from pandas DataFrames to numpy arrays. 
@@ -92,9 +89,9 @@ In the cell below:
 
 
 ```python
-list_classes = ["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate"]
-y = train[list_classes].values
-list_sentences_train = train['comment_text'].values
+list_classes = None
+y = None
+list_sentences_train = None
 ```
 
 According to the data dictionary for this Kaggle competition, there are no missing values in either the train or the test set. However, let's quickly double check, just to be sure!
@@ -103,16 +100,9 @@ Run the cell below to see if there are any missing values in either the training
 
 
 ```python
-# Double check that there are no missing values in either train or test set
+# Double check that there are no missing values in either training set
 train['comment_text'].isna().any() 
 ```
-
-
-
-
-    False
-
-
 
 ### Preprocessing The Data
 
@@ -134,10 +124,10 @@ In the cell below:
 
 ```python
 # NOTE: This cell may take a little while to run!
-tokenizer = text.Tokenizer(num_words=20000)
-tokenizer.fit_on_texts(list(list_sentences_train))
-list_tokenized_train = tokenizer.texts_to_sequences(list_sentences_train)
-X_t = sequence.pad_sequences(list_tokenized_train, maxlen=100)
+tokenizer = None
+
+list_tokenized_train = None
+X_t = None
 ```
 
 ### Creating Our Model
@@ -148,7 +138,7 @@ In the cell below:
 
 * Set the `embedding_size` to `128`
 * Create an `Input` layer that takes in data of `shape=(100,)`
-* Next, create an `Embedding` layer and pass in `30000` and `embedding_size` as parameters. Make sure to specify that the Embedding layer takes in the output of the input layer as its input by ending the line with `(input_)`
+* Next, create an `Embedding` layer and pass in `20000` and `embedding_size` as parameters. Make sure to specify that the Embedding layer takes in the output of the input layer as its input by ending the line with `(input_)`
 * Create a `Bidirectional` layer. Inside this layer, pass in an `LSTM()`. The parameters for the LSTM should be `25`, and `return_sequences=True`. 
 * Create a `GlobalMaxPool1D` Layer
 * Create a `Dropout` layer, and pass in `0.5` as a parameter. 
@@ -159,17 +149,17 @@ In the cell below:
 
 
 ```python
-embedding_size = 128
-input_ = Input(shape=(100,))
-x = Embedding(30000, embedding_size)(input_)
-x = Bidirectional(LSTM(25, return_sequences=True))(x)
-x = GlobalMaxPool1D()(x)
-x = Dropout(0.5)(x)
-x = Dense(50, activation='relu')(x)
-x = Dropout(0.5)(x)
-x = Dense(6, activation='sigmoid')(x)
+embedding_size = None
+input_ = None
+x = None
+x = None
+x = None
+x = None
+x = None
+x = None
+x = None
 
-model = Model(inputs=input_, outputs=x)
+model = None
 ```
 
 Great! Now that we've created our model, we still need to compile it.  
@@ -181,42 +171,7 @@ In the cell below:
     * `optimizer='adam'`
     * `metrics=['accuracy']`
 
-
-```python
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-```
-
 Now, let's take a look at the model we've created. In the cell below, call `model.summary()`.
-
-
-```python
-model.summary()
-```
-
-    _________________________________________________________________
-    Layer (type)                 Output Shape              Param #   
-    =================================================================
-    input_1 (InputLayer)         (None, 100)               0         
-    _________________________________________________________________
-    embedding_1 (Embedding)      (None, 100, 128)          1920000   
-    _________________________________________________________________
-    bidirectional_1 (Bidirection (None, 100, 50)           30800     
-    _________________________________________________________________
-    global_max_pooling1d_1 (Glob (None, 50)                0         
-    _________________________________________________________________
-    dropout_1 (Dropout)          (None, 50)                0         
-    _________________________________________________________________
-    dense_1 (Dense)              (None, 50)                2550      
-    _________________________________________________________________
-    dropout_2 (Dropout)          (None, 50)                0         
-    _________________________________________________________________
-    dense_2 (Dense)              (None, 6)                 306       
-    =================================================================
-    Total params: 1,953,656
-    Trainable params: 1,953,656
-    Non-trainable params: 0
-    _________________________________________________________________
-    
 
 ### Setting Some Checkpoints
 
@@ -263,25 +218,6 @@ In the cell below:
     * `callbacks=callbacks`
     
 **_NOTE:_** Running the cell below may take 15+ minutes, depending on your machine. Run it, then go get a coffee!
-
-
-```python
-model.fit(X_t, y, batch_size=32, epochs=1, validation_split=0.1, callbacks=callbacks)
-```
-
-    Train on 28722 samples, validate on 3192 samples
-    Epoch 1/1
-    28722/28722 [==============================] - 270s 9ms/step - loss: 0.1332 - acc: 0.9610 - val_loss: 0.0612 - val_acc: 0.9786
-    
-    Epoch 00001: val_loss improved from inf to 0.06120, saving model to weights_base.best.hdf5
-    
-
-
-
-
-    <keras.callbacks.History at 0x20e14733b38>
-
-
 
 Validation accuracy of over 97.8% when trained on only 20% of the data--this is excellent! If you train on the entire training set, you'll see that we achieve over 98% accuracy after only 1 epoch of training. It's safe to say our model works pretty well!
 
