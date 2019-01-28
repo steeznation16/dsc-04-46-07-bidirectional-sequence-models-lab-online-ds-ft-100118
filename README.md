@@ -17,7 +17,7 @@ You will be able to:
 
 In this lab, we're going to use a **_Bidrectional LSTM Model_** to build a model that can identify toxic comments on social media. This dataset comes from the [Toxic Comment Classification Challenge on Kaggle](https://www.kaggle.com/c/jigsaw-toxic-comment-classification-challenge) in partnership with Google and Jigsaw.
 
-### The Problem
+## The Problem
 
 From the "Data" section of the Kaggle competition linked above:
 
@@ -55,9 +55,9 @@ from keras.callbacks import EarlyStopping
 ```
 
     Using TensorFlow backend.
-    
 
-### Loading the Data
+
+## Loading the Data
 
 We'll start by loading in our training and testing data. You'll find the data stored inside of the file `data.zip` included in this repo. 
 
@@ -114,7 +114,7 @@ train['comment_text'].isna().any()
 
 
 
-### Preprocessing The Data
+## Preprocessing The Data
 
 Next, We'll need to preprocess our data. We've already learned how to do most of this by working with NLTK--however, keras also contains some excellent preprocessing packages to help prepare text data.  Since we'll be feeding this data right into a model built with keras, this has the added benefit of ensuring that our data will be in a format that our model will be able to work with, meaning that we can avoid the weird bugs that sometimes occur when working with multiple different 3rd party libraries at the same time. 
 
@@ -140,7 +140,7 @@ list_tokenized_train = tokenizer.texts_to_sequences(list_sentences_train)
 X_t = sequence.pad_sequences(list_tokenized_train, maxlen=100)
 ```
 
-### Creating Our Model
+## Creating Our Model
 
 Now that we've loaded and preprocessed our data, we're ready to begin designing our model. By now, working with keras to create and compile a model will probably feel familiar to you. To keep things simple, we've left the name of each layer below. Your job will be to create each layer, and specify the previous layer that acts as it's input (which is why so many of the layers are called `x` below--you've probably noticed this simplifies the creation process by eliminating the need to keep track of which layer is which at any given point). 
 
@@ -216,9 +216,9 @@ model.summary()
     Trainable params: 1,953,656
     Non-trainable params: 0
     _________________________________________________________________
-    
 
-### Setting Some Checkpoints
+
+## Setting Some Checkpoints
 
 Training models like this can be tricky. Because of that, we'll make use of **_Checkpoints_** to help us periodically save our work in case things go wrong during training. 
 
@@ -248,7 +248,7 @@ early_stopping = EarlyStopping(monitor='val_loss', mode='min', patience=25)
 callbacks = [checkpoint, early_stopping]
 ```
 
-### Training the Model
+## Training the Model
 
 Now, we're ready to train our data. Because our model contains over 1.9 million trainable parameters, this will take a little while to train! 
 
@@ -274,7 +274,7 @@ model.fit(X_t, y, batch_size=32, epochs=1, validation_split=0.1, callbacks=callb
     28722/28722 [==============================] - 270s 9ms/step - loss: 0.1332 - acc: 0.9610 - val_loss: 0.0612 - val_acc: 0.9786
     
     Epoch 00001: val_loss improved from inf to 0.06120, saving model to weights_base.best.hdf5
-    
+
 
 
 
@@ -285,6 +285,6 @@ model.fit(X_t, y, batch_size=32, epochs=1, validation_split=0.1, callbacks=callb
 
 Validation accuracy of over 97.8% when trained on only 20% of the data--this is excellent! If you train on the entire training set, you'll see that we achieve over 98% accuracy after only 1 epoch of training. It's safe to say our model works pretty well!
 
-# Summary
+## Summary
 
 In this lab, we incorporated everything we've learned about sequence models and embedding layers to build a Bidirectional LSTM Network to successfully classify toxic comments from wikipedia!
